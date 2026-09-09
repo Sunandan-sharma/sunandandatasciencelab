@@ -1,0 +1,78 @@
+library(corrplot)
+library(ggplot2)
+
+set.seed(42)
+
+n <- 200
+
+mydata123 <- data.frame(
+  date = seq(
+    as.Date("2024-01-01"),
+    by = "day",
+    length.out = n
+  ),
+ 
+  category = sample(
+    c("A", "B", "C", "D"),
+    n,
+    replace = TRUE
+  ),
+ 
+  category_column = sample(
+    c("A", "B", "C", "D"),
+    n,
+    replace = TRUE
+  ),
+ 
+  column_1 = rnorm(n, mean = 60, sd = 10),
+ 
+  value = rnorm(n, mean = 50, sd = 15),
+ 
+  value_column = rnorm(n, mean = 100, sd = 20)
+)
+
+# Add 150 to first five values
+mydata123$value_column[1:5] <-
+  mydata123$value_column[1:5] + 150
+
+# First five rows
+cat("\nFirst Five Rows:\n")
+print(head(mydata123))
+
+# Numerical data
+numeric_data <- mydata123[
+  c("column_1", "value", "value_column")
+]
+
+# Correlation matrix
+correlation <- cor(numeric_data)
+
+cat("\nCorrelation Matrix:\n")
+print(correlation)
+
+# Correlation plot
+corrplot(
+  correlation,
+  method = "circle",
+  type = "upper",
+  addCoef.col = "black",
+  tl.col = "black",
+  title = "Correlation Plot"
+)
+
+# Scatter plot
+ggplot(
+  mydata123,
+  aes(x = column_1, y = value)
+) +
+  geom_point() +
+  geom_smooth(
+    method = "lm",
+    se = FALSE
+  ) +
+  labs(
+    title = "Column 1 vs Value",
+    x = "Column 1",
+    y = "Value"
+  ) +
+  theme_minimal()
